@@ -1,11 +1,13 @@
 searchFormBtn.addEventListener('click', () => {
-  location.hash = '#search=';/* al oprimir buscar te lleva a search */
+  location.hash = '#search=' + searchFormInput.value;/* al oprimir buscar te lleva a search y concatenado el valor del input*/
 })
 trendingBtn.addEventListener('click', () => {
   location.hash = '#trends';/* al oprimir buscar te lleva a search */
 })
 arrowBtn.addEventListener('click', () => {
-  location.hash = '#home';/* al oprimir buscar te lleva a search */
+  //  location.hash = '#home';/* al oprimir buscar te lleva a search */
+  history.back()/* permite regresar en el historial */
+
 })
 
 window.addEventListener('DOMContentLoaded', navigator);/* llamamos el evento DomContentLoaded de window, la funcion que va a ejecutar y un false */ /* llamamos cuando carge la aplicacion */
@@ -26,6 +28,10 @@ function navigator() {
   } else {
     homePage();
   }
+
+  /* logica para que el scroll comiense desde el top */
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
 }
 function homePage() {
   console.log('Home!!');
@@ -96,13 +102,16 @@ function searchPage() {
   arrowBtn.classList.remove('inactive');
   arrowBtn.classList.remove('header-arrow--white');
   headerTitle.classList.add('inactive');
-  headerCategoryTitle.classList.remove('inactive');
+  headerCategoryTitle.classList.add('inactive');
   searchForm.classList.remove('inactive');
 
   trendingPreviewSection.classList.add('inactive');
   categoriesPreviewSection.classList.add('inactive');
   genericSection.classList.remove('inactive');
   movieDetailSection.classList.add('inactive');
+/* convertimos en array lo que esta en string y recorremos separando de un lado lo que este antes del = y en tro los que este despues del = */
+  const [_, query] = location.hash.split('=');//['·search', 'input.value'] /* desustructuramos y recorremos el array separandolo */
+  getMoviesBySearch(query);
 }
 function trendsPage() {
   console.log('Trends!!');
@@ -120,4 +129,8 @@ function trendsPage() {
   categoriesPreviewSection.classList.add('inactive');
   genericSection.classList.remove('inactive');
   movieDetailSection.classList.add('inactive');
+
+  headerCategoryTitle.innerHTML = 'Tendencias';/* accedemos a categoryTitles de node.js*/
+
+  getTrendingMovies();
 }

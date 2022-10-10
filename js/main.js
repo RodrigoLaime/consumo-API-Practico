@@ -27,6 +27,29 @@ function createMovies(movies, container) {/* pasarle el array y el contenedor */
 
 }
 
+function createCategories(categories, container){
+  container.innerHTML = "";
+
+  categories.forEach(category => {/* movie hace referencia a la respuesta json de la api */
+    /* Crear Elementos -----------------*/
+    const categoryContainer = document.createElement('div');
+    categoryContainer.classList.add('category-container');/* agregar clase para que se active de css */
+
+    const categoryTitle = document.createElement('h3');
+    categoryTitle.classList.add('category-title');
+    categoryTitle.setAttribute('id', 'id' + category.id); /* atributo id y concatenamos el id con la propiedad de la api id*/
+    categoryTitle.addEventListener('click', () => {
+      location.hash = `#category=${category.id}-${category.name}`;/* cada que oprimen el titulo categoria te lleva a segun el id y el name a la categoria del id*/
+    })
+    const categoryTitleText = document.createTextNode(category.name)/* obtenemos la propiedad name de la api*/
+
+    /* agregar elemento ---------------*/
+    categoryTitle.appendChild(categoryTitleText);
+    categoryContainer.appendChild(categoryTitle);
+    container.appendChild(categoryContainer);
+  });
+}
+
 /* LLAMADO A LA API---------------------------------- */
 async function getTrendingMoviesPreview() {
   const { data } = await api('trending/movie/day');/* Url de api endpoin tendencia y su apikey */
@@ -64,27 +87,26 @@ async function getCategoriesPreview() {
   const categories = data.genres;/* obtenemos la propiedad de genres de data que tiene las peliculas */
   /* console.log({ data, genres }); */
 
+  createCategories(categories, categoriesPreviewList)
+  //categoriesPreviewList.innerHTML = "";/* variable establecida en node.js */  /* cada que carge se recetea la informacion para que no se duplique la informacion */
+  //categories.forEach(category => {/* movie hace referencia a la respuesta json de la api */
+  //  /* Crear Elementos -----------------*/
+  //  const categoryContainer = document.createElement('div');
+  //  categoryContainer.classList.add('category-container');/* agregar clase para que se active de css */
 
-  categoriesPreviewList.innerHTML = "";/* variable establecida en node.js */  /* cada que carge se recetea la informacion para que no se duplique la informacion */
-  categories.forEach(category => {/* movie hace referencia a la respuesta json de la api */
-    /* Crear Elementos -----------------*/
-    const categoryContainer = document.createElement('div');
-    categoryContainer.classList.add('category-container');/* agregar clase para que se active de css */
-
-    const categoryTitle = document.createElement('h3');
-    categoryTitle.classList.add('category-title');
-    categoryTitle.setAttribute('id', 'id' + category.id); /* atributo id y concatenamos el id con la propiedad de la api id*/
-    categoryTitle.addEventListener('click', () => {
-      location.hash = `#category=${category.id}-${category.name}`;/* cada que oprimen el titulo categoria te lleva a segun el id y el name a la categoria del id*/
-    })
-    const categoryTitleText = document.createTextNode(category.name)/* obtenemos la propiedad name de la api*/
+  //  const categoryTitle = document.createElement('h3');
+  //  categoryTitle.classList.add('category-title');
+  //  categoryTitle.setAttribute('id', 'id' + category.id); /* atributo id y concatenamos el id con la propiedad de la api id*/
+  //  categoryTitle.addEventListener('click', () => {
+  //    location.hash = `#category=${category.id}-${category.name}`;/* cada que oprimen el titulo categoria te lleva a segun el id y el name a la categoria del id*/
+  //  })
+  //  const categoryTitleText = document.createTextNode(category.name)/* obtenemos la propiedad name de la api*/
 
     /* agregar elemento ---------------*/
-    categoryTitle.appendChild(categoryTitleText);
-    categoryContainer.appendChild(categoryTitle);
-    categoriesPreviewList.appendChild(categoryContainer);
-
-  });
+  //  categoryTitle.appendChild(categoryTitleText);
+  //  categoryContainer.appendChild(categoryTitle);
+  //  categoriesPreviewList.appendChild(categoryContainer);
+ // });
 
 }
 
@@ -119,5 +141,30 @@ async function getMoviesByCategory(id) {
   //  genericSection.appendChild(movieContainer);
   //  /*     console.log(trendingPreviewMoviesContainer); */
   //});
+
+}
+async function getMoviesBySearch(query) {
+  const { data } = await api('search/movie', {/* Url de api endpoin tendencia y su apikey */
+    params: {/* pasa parametros */
+      query 
+    }
+  });
+
+  /*  const data = await res.json(); */
+
+  const movies = data.results;/* obtenemos la propiedad de results de data que tiene las peliculas */
+  console.log({ data, movies });
+
+  createMovies(movies, genericSection);
+}
+
+async function getTrendingMovies() {
+  const { data } = await api('trending/movie/day');/* Url de api endpoin tendencia y su apikey */
+  /*  const data = await res.json(); */
+
+  const movies = data.results;/* obtenemos la propiedad de results de data que tiene las peliculas */
+
+  /* LLamamos la funcion */
+  createMovies(movies, genericSection);/* Le pasamos los argumentos que necesita la funcion (el array y el contenedor de peliculas)*/
 
 }
