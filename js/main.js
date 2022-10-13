@@ -13,6 +13,9 @@ function createMovies(movies, container) {/* pasarle el array y el contenedor */
     /* Crear Elementos -----------------*/
     const movieContainer = document.createElement('div');
     movieContainer.classList.add('movie-container');/* agregar clase para que se active de css */
+    movieContainer.addEventListener('click', () => {/* evento que */
+      location.hash = '#movie=' + movie.id;
+    });
 
     const movieImg = document.createElement('img');
     movieImg.classList.add('movie-img');
@@ -27,7 +30,7 @@ function createMovies(movies, container) {/* pasarle el array y el contenedor */
 
 }
 
-function createCategories(categories, container){
+function createCategories(categories, container) {
   container.innerHTML = "";
 
   categories.forEach(category => {/* movie hace referencia a la respuesta json de la api */
@@ -57,6 +60,7 @@ async function getTrendingMoviesPreview() {
 
   const movies = data.results;/* obtenemos la propiedad de results de data que tiene las peliculas */
   console.log({ data, movies });
+  console.log(movies)
 
   /* LLamamos la funcion */
   createMovies(movies, trendingMoviesPreviewList);/* Le pasamos los argumentos que necesita la funcion (el array y el contenedor de peliculas)*/
@@ -102,11 +106,11 @@ async function getCategoriesPreview() {
   //  })
   //  const categoryTitleText = document.createTextNode(category.name)/* obtenemos la propiedad name de la api*/
 
-    /* agregar elemento ---------------*/
+  /* agregar elemento ---------------*/
   //  categoryTitle.appendChild(categoryTitleText);
   //  categoryContainer.appendChild(categoryTitle);
   //  categoriesPreviewList.appendChild(categoryContainer);
- // });
+  // });
 
 }
 
@@ -146,7 +150,7 @@ async function getMoviesByCategory(id) {
 async function getMoviesBySearch(query) {
   const { data } = await api('search/movie', {/* Url de api endpoin tendencia y su apikey */
     params: {/* pasa parametros */
-      query 
+      query
     }
   });
 
@@ -167,4 +171,33 @@ async function getTrendingMovies() {
   /* LLamamos la funcion */
   createMovies(movies, genericSection);/* Le pasamos los argumentos que necesita la funcion (el array y el contenedor de peliculas)*/
 
+}
+
+async function getMovieById(id) {
+  const { data: movie } = await api('movie/' + id);
+
+  /* mostrar la imagen */
+  const movieImgUrl = 'https://image.tmdb.org/t/p/w300' + movie.poster_path;
+  console.log(movieImgUrl);
+  headerSection.style.background = `
+  linear-gradient(
+    180deg, rgba(0, 0, 0, 0.35) 19.27%, rgba(0, 0, 0, 0) 29.17%),
+  url(${movieImgUrl})`;
+
+  /* logica para llevar mostrar el titulo, texto, estrellas de la peli */
+  movieDetailTitle.textContent = movie.title;
+  movieDetailDescription.textContent = movie.overview;
+  movieDetailScore.textContent = movie.vote_average;
+
+  /* lgica que muestra la categoria de la pelicula */
+  createCategories(movie.genres, movieDetailCategoriesList);/* le pasamos el array de categorias genres y que las agrege al nodo movieDetailCategoriesList*/
+
+  getRelatedMoviesId(id);/* funcion para ver las pelis relacionadas */
+}
+
+async function getRelatedMoviesId(id) {
+  const { data } = await api(`movie/${id}/recommendations`);
+  const relatedMovies = data.results;
+
+  createMovies(relatedMovies, relatedMoviesContainer);/* le pasamos el dato y el contenedor donde se va a  mostrar la info */
 }

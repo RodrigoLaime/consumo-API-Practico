@@ -92,6 +92,9 @@ function movieDetailsPage() {
   categoriesPreviewSection.classList.add('inactive');
   genericSection.classList.add('inactive');
   movieDetailSection.classList.remove('inactive');
+
+  const [_, movieId] = location.hash.split('=');//[pelicular, id]
+  getMovieById(movieId);/* funcion que permite ver la informacion de la peli */
 }
 function searchPage() {
   console.log('Search!!');
@@ -109,7 +112,7 @@ function searchPage() {
   categoriesPreviewSection.classList.add('inactive');
   genericSection.classList.remove('inactive');
   movieDetailSection.classList.add('inactive');
-/* convertimos en array lo que esta en string y recorremos separando de un lado lo que este antes del = y en tro los que este despues del = */
+  /* convertimos en array lo que esta en string y recorremos separando de un lado lo que este antes del = y en tro los que este despues del = */
   const [_, query] = location.hash.split('=');//['·search', 'input.value'] /* desustructuramos y recorremos el array separandolo */
   getMoviesBySearch(query);
 }
